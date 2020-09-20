@@ -20,6 +20,23 @@ const earthMaterial = new BasicMaterial({
     map: renderer.loadTexture('resources/earth_daymap.jpg')
 });
 
+// min kode for texturer/materiale:
+const moonMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_moon.jpg')
+});
+
+const marsMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_mars.jpg')
+});
+
+const mercuryMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_mercury.jpg')
+});
+
+const saturnMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_saturn.jpg')
+});
+
 // Get more textures here:
 // https://www.solarsystemscope.com/textures/
 
@@ -55,6 +72,8 @@ const earthOrbitNode = new Node(scene);
 const earthCenterNode = new Node(earthOrbitNode);
 // We translate it along the x-axis to a suitable position.
 // When the earthOrbitNode is rotated, this node will orbit about the center of the sun.
+// 2,729 meter eller 8 feet 11,45 inches
+//burde nok endre litt på denne distansen...
 earthCenterNode.setTranslation(11.45, 0, 0);
 
 // Create a new Mesh for the Earth.
@@ -66,6 +85,78 @@ earthCenterNode.add(earth);
 // True scale: earth.setScale(0.0091, 0.0091, 0.0091);
 earth.setScale(0.091, 0.091, 0.091); // 10 times larger than irl
 
+// lager månen
+const moonPrimitive = Primitive.from(sunPrimitive, moonMaterial);
+
+const moonOrbitNode = new Node(earthCenterNode);
+
+const moonCenterNode = new Node(moonOrbitNode);
+
+//veit ikkje heilt kor langt vekke den skal vere..
+moonCenterNode.setTranslation(0.3, 0, 0);
+
+const moon = new Mesh([moonPrimitive]);
+
+moonCenterNode.add(moon);
+
+//rett scale? tok 10 gangar større enn irl
+moon.setScale(0.025, 0.025, 0.025);
+
+// lagar mars:
+const marsPrimitive = Primitive.from(sunPrimitive, marsMaterial);
+
+const marsOrbitNode = new Node(scene);
+
+const marsCenterNode = new Node(marsOrbitNode);
+
+//13 feet og 7,68 inches eller 4,157 vekke
+//4,157/2,729 = 1,52. 11,45 * 1,52 = 17,44
+marsCenterNode.setTranslation(17.44, 0, 0);
+
+const mars = new Mesh([marsPrimitive]);
+
+marsCenterNode.add(mars);
+
+//true scale: 0.0048
+mars.setScale(0.048, 0.048, 0.048);
+
+//lagar merkur
+const mercuryPrimitive = Primitive.from(sunPrimitive, mercuryMaterial);
+
+const mercuryOrbitNode = new Node(scene);
+
+const mercuryCenterNode = new Node(mercuryOrbitNode);
+
+//mercury distance (base jorda 11,45 vekke): 11,45*(1,057/2,729) = 4,435
+mercuryCenterNode.setTranslation(4.435, 0, 0);
+
+const mercury = new Mesh([mercuryPrimitive]);
+
+mercuryCenterNode.add(mercury);
+
+//mercury scale: (true) 0.0034 -> 0.034
+mercury.setScale(0.034, 0.034, 0.034);
+
+//lagar saturn:
+const saturnPrimitive = Primitive.from(sunPrimitive, saturnMaterial);
+
+const saturnOrbitNode = new Node(scene);
+
+const saturnCenterNode = new Node(saturnOrbitNode);
+
+//saturn distance (base jorda 11,45 vekke): 11,45*(26,04/2,729) = 109,255
+saturnCenterNode.setTranslation(109.255, 0, 0);
+
+const saturn = new Mesh([saturnPrimitive]);
+
+saturnCenterNode.add(saturn);
+
+//saturn scale: (true) 0.0836 -> 0.836
+saturn.setScale(0.836, 0.836, 0.836);
+
+//TODO - fleire planetar
+
+//TODO - geostationary satellite
 
 // We create a Node representing movement, in order to decouple camera rotation.
 // We do this so that the skybox follows the movement, but not the rotation of the camera.
@@ -222,7 +313,26 @@ function loop(now) {
     earthOrbitNode.rotateY(orbitalRotationFactor);
     
     earth.rotateY(orbitalRotationFactor * 365); // The Earth rotates approx. 365 times per year.
-    sun.rotateY(orbitalRotationFactor * 25); // The Sun rotates approx. 25 times per year.
+    //sun.rotateY(orbitalRotationFactor * 25); // The Sun rotates approx. 25 times per year.
+    sun.rotateY(orbitalRotationFactor * (365/27));
+    // ^burde ikkje gange-leddet vere 13? bruker ca 27 dagar på å rotera ein gong, altså 365/27 = ~13,5
+
+    //dagar på rotasjon om seg sjølv og orbital -> orbital..Factor * 365/dagar ? Om orbitalRotationFactor = 1 rotasjon/runde per år
+
+    //roterer månen
+    moonOrbitNode.rotateY(orbitalRotationFactor * 13.36); // månen roterar rundt jorda ca. 13,36 gongar per år (27,3 dagar for ein rotasjon rundt jorda).
+
+    //roterer mars
+    marsOrbitNode.rotateY(orbitalRotationFactor * (365/687));
+    mars.rotateY(orbitalRotationFactor * (365/1.025));
+
+    //roterer merkur
+    mercuryOrbitNode.rotateY(orbitalRotationFactor * (365/88));
+    mercury.rotateY(orbitalRotationFactor * (365/59));
+
+    //roterer saturn
+    saturnOrbitNode.rotateY(orbitalRotationFactor * (365/10756));
+    saturn.rotateY(orbitalRotationFactor * (365/0.4396));
 
     // Reset mouse movement accumulator every frame.
     yaw = 0;
