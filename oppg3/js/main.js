@@ -45,6 +45,22 @@ const venusMaterial = new BasicMaterial({
     map: renderer.loadTexture('resources/2k_venus_atmosphere.jpg')
 });
 
+const satelliteMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_eris_fictional.jpg')
+});
+
+const jupiterMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_jupiter.jpg')
+});
+
+const uranusMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_uranus.jpg')
+});
+
+const neptuneMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_neptune.jpg')
+})
+
 // Get more textures here:
 // https://www.solarsystemscope.com/textures/
 
@@ -197,6 +213,72 @@ venusCenterNode.add(venus);
 venus.setScale(0.086, 0.086, 0.086);
 
 //TODO - geostationary satellite (opt)
+const satellitePrimitive = Primitive.from(sunPrimitive, satelliteMaterial);
+
+const satelliteOrbitNode = new Node(earthCenterNode);
+
+const satelliteCenterNode = new Node(satelliteOrbitNode);
+
+//berre set ein distanse
+satelliteCenterNode.setTranslation(0.12, 0, 0);
+
+const satellite = new Mesh([satellitePrimitive]);
+
+satelliteCenterNode.add(satellite);
+
+//berre set ein skalering
+satellite.setScale(0.004, 0.004, 0.004);
+
+//lagar jupiter
+const jupiterPrimitive = Primitive.from(sunPrimitive, jupiterMaterial);
+
+const jupiterOrbitNode = new Node(scene);
+
+const jupiterCenterNode = new Node(jupiterOrbitNode);
+
+//jupiter distanse: 11,45*(14,199/2,729) = 59,574
+jupiterCenterNode.setTranslation(59.574, 0, 0);
+
+const jupiter = new Mesh([jupiterPrimitive]);
+
+jupiterCenterNode.add(jupiter);
+
+//jupiter scale *10
+jupiter.setScale(1.027, 1.027, 1.027);
+
+//lagar uranus
+const uranusPrimitive = Primitive.from(sunPrimitive, uranusMaterial);
+
+const uranusOrbitNode = new Node(scene);
+
+const uranusCenterNode = new Node(uranusOrbitNode);
+
+//distanse: 11,45*(52,378/2,729) = 219,761
+uranusCenterNode.setTranslation(219.761, 0, 0);
+
+const uranus = new Mesh([uranusPrimitive]);
+
+uranusCenterNode.add(uranus);
+
+//uranus scale *10
+uranus.setScale(0.337, 0.337, 0.337);
+
+//lagar neptun
+const neptunePrimitive = Primitive.from(sunPrimitive, neptuneMaterial);
+
+const neptuneOrbitNode = new Node(scene);
+
+const neptuneCenterNode = new Node(neptuneOrbitNode);
+
+//distanse: 11,45*(82,116/2,729) = 344,532
+neptuneCenterNode.setTranslation(344.532, 0, 0);
+
+const neptune = new Mesh([neptunePrimitive]);
+
+neptuneCenterNode.add(neptune);
+
+//neptun scale *10
+neptune.setScale(0.326, 0.326, 0.326)
 
 // We create a Node representing movement, in order to decouple camera rotation.
 // We do this so that the skybox follows the movement, but not the rotation of the camera.
@@ -380,6 +462,21 @@ function loop(now) {
     //roterer venus
     venusOrbitNode.rotateY(orbitalRotationFactor * (365/224.7));
     venus.rotateY(orbitalRotationFactor * (365/243));
+
+    //roterer satelitt - nei, den skal følge med jorda og peike samme plass heile tida... men fekk ikkje til å leggje den under earth...
+    satelliteOrbitNode.rotateY(orbitalRotationFactor * 365);
+
+    //roterer jupiter
+    jupiterOrbitNode.rotateY(orbitalRotationFactor * (365/4330.6));
+    jupiter.rotateY(orbitalRotationFactor * (365/0.417));
+
+    //roterer uranus
+    uranusOrbitNode.rotateY(orbitalRotationFactor * (365/30687));
+    uranus.rotateY(orbitalRotationFactor * (365/0.718));
+
+    //roterer neptun
+    neptuneOrbitNode.rotateY(orbitalRotationFactor * (365/60190));
+    neptune.rotateY(orbitalRotationFactor * (365/0.671));
 
     // Reset mouse movement accumulator every frame.
     yaw = 0;
