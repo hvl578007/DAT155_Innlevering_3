@@ -37,6 +37,14 @@ const saturnMaterial = new BasicMaterial({
     map: renderer.loadTexture('resources/2k_saturn.jpg')
 });
 
+const meteoriteMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/meteorite.jpg')
+});
+
+const venusMaterial = new BasicMaterial({
+    map: renderer.loadTexture('resources/2k_venus_atmosphere.jpg')
+});
+
 // Get more textures here:
 // https://www.solarsystemscope.com/textures/
 
@@ -99,7 +107,7 @@ const moon = new Mesh([moonPrimitive]);
 
 moonCenterNode.add(moon);
 
-//rett scale? tok 10 gangar større enn irl
+//rett scale??? tok noko eg... tok 10 gangar større enn irl?
 moon.setScale(0.025, 0.025, 0.025);
 
 // lagar mars:
@@ -154,9 +162,41 @@ saturnCenterNode.add(saturn);
 //saturn scale: (true) 0.0836 -> 0.836
 saturn.setScale(0.836, 0.836, 0.836);
 
-//TODO - fleire planetar
+//lagar "meteoritt/måne" rundt månen
+const meteoritePrimitive = Primitive.from(sunPrimitive, meteoriteMaterial);
 
-//TODO - geostationary satellite
+const meteoriteOrbitNode = new Node(moonCenterNode);
+
+const meteoriteCenterNode = new Node(meteoriteOrbitNode);
+
+//berre fant på noko
+meteoriteCenterNode.setTranslation(0.05, 0, 0);
+
+const meteorite = new Mesh([meteoritePrimitive]);
+
+meteoriteCenterNode.add(meteorite);
+
+//berre fant på noko
+meteorite.setScale(0.005, 0.005, 0.005);
+
+//lagar venus
+const venusPrimitive = Primitive.from(sunPrimitive, venusMaterial);
+
+const venusOrbitNode = new Node(scene);
+
+const venusCenterNode = new Node(venusOrbitNode);
+
+//venus distance (base jorda 11,45 vekke): 11,45*(1,972/2,729) = 8,274
+venusCenterNode.setTranslation(8.274, 0, 0);
+
+const venus = new Mesh([venusPrimitive]);
+
+venusCenterNode.add(venus);
+
+//venus scale (true): 0.0086 -> 0.086
+venus.setScale(0.086, 0.086, 0.086);
+
+//TODO - geostationary satellite (opt)
 
 // We create a Node representing movement, in order to decouple camera rotation.
 // We do this so that the skybox follows the movement, but not the rotation of the camera.
@@ -333,6 +373,13 @@ function loop(now) {
     //roterer saturn
     saturnOrbitNode.rotateY(orbitalRotationFactor * (365/10756));
     saturn.rotateY(orbitalRotationFactor * (365/0.4396));
+
+    //roterer meteoritt
+    meteoriteOrbitNode.rotateY(orbitalRotationFactor * (365/4));
+
+    //roterer venus
+    venusOrbitNode.rotateY(orbitalRotationFactor * (365/224.7));
+    venus.rotateY(orbitalRotationFactor * (365/243));
 
     // Reset mouse movement accumulator every frame.
     yaw = 0;
