@@ -463,7 +463,7 @@ function loop(now) {
     venusOrbitNode.rotateY(orbitalRotationFactor * (365/224.7));
     venus.rotateY(orbitalRotationFactor * (365/243));
 
-    //roterer satelitt - nei, den skal følge med jorda og peike samme plass heile tida... men fekk ikkje til å leggje den under earth...
+    //roterer satelitt - skal følgje jorda, så samme som earth.rotateY
     satelliteOrbitNode.rotateY(orbitalRotationFactor * 365);
 
     //roterer jupiter
